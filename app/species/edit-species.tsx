@@ -66,7 +66,6 @@ type FormData = z.infer<typeof speciesSchema>;
 
 export function EditSpecies({ species }: { species: Species }) {
   const [open, setOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(true);
 
   const router = useRouter();
 
@@ -89,7 +88,6 @@ export function EditSpecies({ species }: { species: Species }) {
   useEffect(() => {
     if (open) {
       form.reset(defaultValues);
-      setIsEditing(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
