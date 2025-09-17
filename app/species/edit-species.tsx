@@ -103,17 +103,17 @@ export function EditSpecies({ species }: { species: Species }) {
         kingdom: data.kingdom,
         total_population: data.total_population,
         description: data.description,
-      } as any)
+      })
       .eq("id", species.id);
 
     if (error) {
-      return toast({ title: "Something went wrong.", description: error.message, variant: "destructive" });
+      toast({ title: "Something went wrong.", description: error.message, variant: "destructive" });
+      return;
     }
 
     setOpen(false);
     router.refresh();
-
-    return toast({ title: "Species updated successfully!" });
+    toast({ title: "Species updated successfully!" });
   };
 
   const handleCancel = () => {
@@ -137,7 +137,10 @@ export function EditSpecies({ species }: { species: Species }) {
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            void form.handleSubmit(onSubmit)(e);
+          }} className="space-y-4">
             <FormField
               control={form.control}
               name="scientific_name"
