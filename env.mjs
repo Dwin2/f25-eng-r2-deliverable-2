@@ -8,7 +8,7 @@ export const env = createEnv({
    */
   server: {
     NODE_ENV: z.enum(["development", "test", "production"]),
-    GROQ_API_KEY: z.string().min(1).optional(),
+    GROQ_API_KEY: z.string().min(1),
   },
 
   /**
