@@ -4,7 +4,6 @@ import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -75,6 +74,7 @@ const defaultValues: Partial<FormData> = {
 };
 
 export default function AddSpeciesDialog({ userId }: { userId: string }) {
+  console.log("AddSpeciesDialog userId:", userId);
   const router = useRouter();
 
   // Control open/closed state of the dialog
@@ -127,6 +127,13 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
       title: "New species added!",
       description: "Successfully added " + input.scientific_name + ".",
     });
+  };
+
+  const handleCancel = () => {
+    if (window.confirm("Are you sure you want to cancel? All unsaved data will be lost.")) {
+      setOpen(false);
+      form.reset(defaultValues);
+    } 
   };
 
   return (
@@ -272,11 +279,9 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                 <Button type="submit" className="ml-1 mr-1 flex-auto">
                   Add Species
                 </Button>
-                <DialogClose asChild>
-                  <Button type="button" className="ml-1 mr-1 flex-auto" variant="secondary">
-                    Cancel
-                  </Button>
-                </DialogClose>
+                <Button type="button" className="ml-1 mr-1 flex-auto" variant="secondary" onClick={handleCancel}>
+                  Cancel
+                </Button>
               </div>
             </div>
           </form>

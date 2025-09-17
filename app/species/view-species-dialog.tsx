@@ -13,7 +13,9 @@ import {
 import { useState } from "react";
 
 import type { Database } from "@/lib/schema";
-export function ViewSpeciesDialog({ species }: { species: Database["public"]["Tables"]["species"]["Row"] }) {
+type Species = Database["public"]["Tables"]["species"]["Row"];
+
+export function ViewSpeciesDialog({ species }: { species: Species }) {
   const [open, setOpen] = useState(false);
 
   return (

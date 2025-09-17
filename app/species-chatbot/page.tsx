@@ -17,8 +17,32 @@ export default function SpeciesChatbot() {
   };
 
 const handleSubmit = async () => {
-  // TODO: Implement this function
-}
+  const trimmed = message.trim();
+  if (!trimmed) return;
+
+  const userMsg = { role: "user" as const, content: trimmed };
+  const nextHistory = [...chatLog, userMsg];
+  setChatLog(nextHistory);
+  setMessage("");
+  handleInput();
+
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ question: trimmed, history: nextHistory }),
+  });
+
+  const json = await res.json() as { answer?: string; error?: string };
+
+  if (res.ok && json?.answer) {
+    setChatLog((prev) => [...prev, { role: "bot", content: String(json.answer) }]);
+  } else {
+    const err = json?.error;
+    setChatLog((prev) => [...prev, { role: "bot", content: `Error: ${String(err)}` }]);
+  }
+  
+  console.log(chatLog);
+};
 
 return (
     <>
