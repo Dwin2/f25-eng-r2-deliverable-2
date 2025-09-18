@@ -1,18 +1,31 @@
 /* eslint-disable */
 "use client";
 import { TypographyH2, TypographyP } from "@/components/ui/typography";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 
 export default function SpeciesChatbot() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const chatEndRef = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState("");
   const [chatLog, setChatLog] = useState<{ role: "user" | "bot"; content: string }[]>([]);
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatLog]);
+
   const handleInput = () => {
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = "auto";
       textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) { //shift and enter to create new line
+      e.preventDefault();
+      void handleSubmit();
     }
   };
 
@@ -82,6 +95,7 @@ return (
               </div>
             ))
           )}
+          <div ref={chatEndRef} />
         </div>
         {/* Textarea and submission */}
         <div className="mt-4 flex flex-col items-end">
@@ -90,6 +104,7 @@ return (
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onInput={handleInput}
+            onKeyDown={handleKeyDown}
             rows={1}
             placeholder="Ask about a species..."
             className="w-full resize-none overflow-hidden rounded border border-border bg-background p-2 text-sm text-foreground focus:outline-none"
