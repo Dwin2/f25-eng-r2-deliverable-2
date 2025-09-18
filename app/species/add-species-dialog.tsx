@@ -17,7 +17,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { createBrowserSupabaseClient } from "@/lib/client-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
 import { useState, type BaseSyntheticEvent } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -75,8 +74,6 @@ const defaultValues: Partial<FormData> = {
 
 export default function AddSpeciesDialog({ userId }: { userId: string }) {
   console.log("AddSpeciesDialog userId:", userId);
-  const router = useRouter();
-
   // Control open/closed state of the dialog
   const [open, setOpen] = useState<boolean>(false);
 
