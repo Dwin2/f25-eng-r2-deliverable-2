@@ -76,6 +76,8 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
   console.log("AddSpeciesDialog userId:", userId);
   // Control open/closed state of the dialog
   const [open, setOpen] = useState<boolean>(false);
+  const [imageValidating, setImageValidating] = useState(false);
+  const [imageError, setImageError] = useState<string>("");
 
   // Instantiate form functionality with React Hook Form, passing in the Zod schema (for validation) and default values
   const form = useForm<FormData>({
@@ -85,6 +87,15 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
   });
 
   const onSubmit = async (input: FormData) => {
+    // Check if there's an image validation error
+    if (imageError) {
+      return toast({
+        title: "Invalid Image URL",
+        description: imageError,
+        variant: "destructive",
+      });
+    }
+
     // The `input` prop contains data that has already been processed by zod. We can now use it in a supabase query
     const supabase = createBrowserSupabaseClient();
     const { error } = await supabase.from("species").insert([
@@ -129,6 +140,27 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
       setOpen(false);
       form.reset(defaultValues);
     } 
+  };
+
+  const validateImage = async (url: string) => {
+    if (!url || url.trim() === "") {
+      setImageError("");
+      return true;
+    }
+
+    setImageValidating(true);
+    setImageError("");
+
+    const img = new Image();
+    img.onload = () => {
+      setImageError("");
+      setImageValidating(false);
+    };
+    img.onerror = () => {
+      setImageError("Invalid image URL");
+      setImageValidating(false);
+    };
+    img.src = url;
   };
 
   return (
@@ -242,8 +274,14 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                           value={value ?? ""}
                           placeholder="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/George_the_amazing_guinea_pig.jpg/440px-George_the_amazing_guinea_pig.jpg"
                           {...rest}
+                          onBlur={async () => {
+                            rest.onBlur?.();
+                            await validateImage(field.value ?? "");
+                          }}
                         />
                       </FormControl>
+                      {imageValidating && <p className="text-sm text-muted-foreground">Validating image...</p>}
+                      {imageError && <p className="text-sm text-destructive">{imageError}</p>}
                       <FormMessage />
                     </FormItem>
                   );

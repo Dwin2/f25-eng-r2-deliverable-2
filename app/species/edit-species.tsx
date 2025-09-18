@@ -20,7 +20,7 @@ import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Edit } from "lucide-react";
+import { Edit, Trash2 } from "lucide-react";
 
 type Species = Database["public"]["Tables"]["species"]["Row"];
 
@@ -121,6 +121,17 @@ export function EditSpecies({ species }: { species: Species }) {
       setOpen(false);
       form.reset(defaultValues);
     } 
+  };
+
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to delete this species? This action cannot be undone.")) return;
+    
+    const supabase = createBrowserSupabaseClient();
+    await supabase.from("species").delete().eq("id", species.id);
+    
+    setOpen(false);
+    window.location.reload();
+    toast({ title: "Species deleted successfully!" });
   };
 
   return (
@@ -226,9 +237,14 @@ export function EditSpecies({ species }: { species: Species }) {
               }}
             />
 
-            <div className="flex items-center gap-2">
-            <Button type="submit">Save</Button>
-            <Button type="button" variant="secondary" onClick={handleCancel}>Cancel</Button>
+            <div className="flex items-center justify-between">
+              <div className="flex gap-2">
+                <Button type="submit">Save</Button>
+                <Button type="button" variant="secondary" onClick={handleCancel}>Cancel</Button>
+              </div>
+              <Button type="button" variant="destructive" size="sm" onClick={handleDelete}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
             </div>
           </form>
         </Form>
