@@ -119,9 +119,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
 
     setOpen(false);
 
-    // Refresh all server components in the current route. This helps display the newly created species because species are fetched in a server component, species/page.tsx.
-    // Refreshing that server component will display the new species from Supabase
-    router.refresh();
+    window.location.reload();
 
     return toast({
       title: "New species added!",

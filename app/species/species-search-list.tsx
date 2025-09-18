@@ -17,19 +17,20 @@ export default function SpeciesSearchList() {
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
+  const fetchAllSpecies = async () => {
+    const supabase = createBrowserSupabaseClient();
+    const { 
+        data: { session } 
+    } = await supabase.auth.getSession();
+    
+    if (!session) return router.push("/");
+    
+    setUserId(session.user.id);
+    const { data: speciesData } = await supabase.from("species").select("*").order("id", { ascending: false });
+    setSpecies(speciesData ?? []);
+  };
+
   useEffect(() => {
-    const fetchAllSpecies = async () => {
-        const supabase = createBrowserSupabaseClient();
-        const { 
-            data: { session } 
-        } = await supabase.auth.getSession();
-        
-        if (!session) return router.push("/");
-        
-        setUserId(session.user.id);
-        const { data: speciesData } = await supabase.from("species").select("*").order("id", { ascending: false });
-        setSpecies(speciesData ?? []);
-    };
     void fetchAllSpecies();
   }, [router]);
 
