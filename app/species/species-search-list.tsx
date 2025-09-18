@@ -35,10 +35,12 @@ export default function SpeciesSearchList() {
 
   const filteredSpecies = species.filter((s) => {
     const search = searchTerm.toLowerCase();
+    /* eslint-disable @typescript-eslint/prefer-nullish-coalescing */
     return s.scientific_name.toLowerCase().includes(search) ||
            s.common_name?.toLowerCase().includes(search) ||
            s.description?.toLowerCase().includes(search) ||
            s.kingdom.toLowerCase().includes(search);
+    /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
   });
   return (
     <>

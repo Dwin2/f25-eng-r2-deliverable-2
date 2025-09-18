@@ -1,12 +1,8 @@
-import { Separator } from "@/components/ui/separator";
 import { TypographyH2 } from "@/components/ui/typography";
 import { createServerSupabaseClient } from "@/lib/server-utils";
 import { redirect } from "next/navigation";
 import AddSpeciesDialog from "./add-species-dialog";
-import type { Database } from "@/lib/schema";
 import SpeciesSearchList from "./species-search-list";
-
-type Species = Database["public"]["Tables"]["species"]["Row"];
 
 export default async function SpeciesPage() {   // Create supabase server component client and obtain user session from stored cookie
    const supabase = createServerSupabaseClient();
