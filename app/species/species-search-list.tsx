@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { createBrowserSupabaseClient } from "@/lib/client-utils";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import SpeciesCard from "./species-card";
 import type { Database } from "@/lib/schema";
 
@@ -17,7 +16,7 @@ export default function SpeciesSearchList() {
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
-  const fetchAllSpecies = async () => {
+  const fetchAllSpecies = useCallback(async () => {
     const supabase = createBrowserSupabaseClient();
     const { 
         data: { session } 
@@ -28,11 +27,11 @@ export default function SpeciesSearchList() {
     setUserId(session.user.id);
     const { data: speciesData } = await supabase.from("species").select("*").order("id", { ascending: false });
     setSpecies(speciesData ?? []);
-  };
+  }, [router]);
 
   useEffect(() => {
     void fetchAllSpecies();
-  }, [router]);
+  }, [fetchAllSpecies]);
 
   const filteredSpecies = species.filter((s) => {
     const search = searchTerm.toLowerCase();

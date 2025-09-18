@@ -142,7 +142,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
     } 
   };
 
-  const validateImage = async (url: string) => {
+  const validateImage =  (url: string) => {
     if (!url || url.trim() === "") {
       setImageError("");
       return true;
@@ -274,9 +274,9 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                           value={value ?? ""}
                           placeholder="https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/George_the_amazing_guinea_pig.jpg/440px-George_the_amazing_guinea_pig.jpg"
                           {...rest}
-                          onBlur={async () => {
+                          onBlur={() => {
                             rest.onBlur?.();
-                            await validateImage(field.value ?? "");
+                            validateImage(field.value ?? "");
                           }}
                         />
                       </FormControl>

@@ -242,7 +242,7 @@ export function EditSpecies({ species }: { species: Species }) {
                 <Button type="submit">Save</Button>
                 <Button type="button" variant="secondary" onClick={handleCancel}>Cancel</Button>
               </div>
-              <Button type="button" variant="destructive" size="sm" onClick={handleDelete}>
+              <Button type="button" variant="destructive" size="sm" onClick={() => void handleDelete()}>
                 <Trash2 className="h-4 w-4" />
               </Button>
             </div>
