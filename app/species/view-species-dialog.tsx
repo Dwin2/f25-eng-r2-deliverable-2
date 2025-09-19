@@ -40,12 +40,15 @@ export function ViewSpeciesDialog({species, authorProfile }: { species: Species;
               <b>Author:</b> {authorProfile?.display_name ?? "Unknown"}
             </div>
             {authorProfile?.email && (
-              <a 
-                href={`mailto:${authorProfile.email}?subject=${species.scientific_name}`}
-                className="text-blue-600 hover:underline flex items-center gap-1"
-              >
-                Contact Author
-              </a>
+              <p>
+                Found a problem?{" "}
+                <a 
+                  href={`mailto:${authorProfile.email}?subject=${"Inquiry about " + species.scientific_name + " species from Biodiversity Hub"}`}
+                  className="text-blue-600 hover:underline"
+                >
+                  Contact Author
+                </a>
+              </p>
             )}
           </div>
         </div>

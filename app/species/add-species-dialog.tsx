@@ -200,13 +200,12 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
         <Form {...form}>
           <form onSubmit={(e: BaseSyntheticEvent) => void form.handleSubmit(onSubmit)(e)}>
             <div className="grid w-full items-center gap-4">
-              {/* Wikipedia Search */}
               <div className="rounded-lg border border-border bg-muted/50 p-4">
                 <div className="flex gap-2">
                   <Input
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search Wikipedia for species info..."
+                    placeholder="Autofill species information from Wikipedia..."
                     className="flex-1"
                     onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), void handleWikipediaSearch())}
                   />
@@ -216,7 +215,7 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
                     onClick={() => void handleWikipediaSearch()}
                     disabled={isSearching || !searchTerm.trim()}
                   >
-                    {isSearching ? <Icons.spinner className="h-4 w-4 animate-spin" /> : "Search"}
+                    {isSearching ? <Icons.spinner className="h-4 w-4 animate-spin" /> : "Autofill"}
                   </Button>
                 </div>
               </div>
