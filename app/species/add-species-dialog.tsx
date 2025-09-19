@@ -16,7 +16,6 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { createBrowserSupabaseClient } from "@/lib/client-utils";
-import { searchWikipediaSpecies } from "@/lib/services/wikipedia-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, type BaseSyntheticEvent } from "react";
 import { useForm } from "react-hook-form";
@@ -170,13 +169,20 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
     if (!searchTerm.trim()) return;
     
     setIsSearching(true);
-    const description = await searchWikipediaSpecies(searchTerm.trim());
     
-    if (description) {
-      form.setValue("description", description);
-      toast({ title: "Description autofilled from Wikipedia!" });
-    } else {
-      toast({ title: "No Wikipedia article found", variant: "destructive" });
+    try {
+      const response = await fetch(`/api/wikipedia?species=${encodeURIComponent(searchTerm.trim())}`);
+      const data = await response.json() as { description?: string; error?: string };
+      
+      if (data.description) {
+        form.setValue("description", data.description);
+        toast({ title: "Description autofilled from Wikipedia!" });
+      } else {
+        toast({ title: "No Wikipedia article found", variant: "destructive" });
+      }
+    } catch (error) {
+      console.error("Wikipedia search error:", error);
+      toast({ title: "Failed to search Wikipedia", variant: "destructive" });
     }
     
     setIsSearching(false);
