@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { createBrowserSupabaseClient } from "@/lib/client-utils";
 import { useRouter } from "next/navigation";
 import SpeciesCard from "./species-card";
@@ -19,6 +20,7 @@ export default function SpeciesSearchList() {
   const [species, setSpecies] = useState<SpeciesWithAuthor[]>([]);
   const [userId, setUserId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("latest");
   const router = useRouter();
 
   const fetchAllSpecies = useCallback(async () => {
@@ -52,11 +54,16 @@ export default function SpeciesSearchList() {
            s.description?.toLowerCase().includes(search) ||
            s.kingdom.toLowerCase().includes(search);
     /* eslint-enable @typescript-eslint/prefer-nullish-coalescing */
+  }).sort((a, b) => {
+    if (sortBy === "alphabetical") {
+      return (a.common_name ?? a.scientific_name).localeCompare(b.common_name ?? b.scientific_name);
+    }
+    return b.id - a.id; // latest first
   });
   return (
     <>
-    <div className="mb-4">
-        <div className="relative">
+    <div className="mb-4 flex gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="text"
@@ -66,6 +73,15 @@ export default function SpeciesSearchList() {
             className="pl-10"
           />
         </div>
+        <Select value={sortBy} onValueChange={setSortBy}>
+          <SelectTrigger className="w-40">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="latest">Latest</SelectItem>
+            <SelectItem value="alphabetical">A-Z</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
     <div className="flex flex-wrap justify-center">
