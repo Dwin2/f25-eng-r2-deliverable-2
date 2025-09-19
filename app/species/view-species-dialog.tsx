@@ -41,7 +41,7 @@ export function ViewSpeciesDialog({species, authorProfile }: { species: Species;
             </div>
             {authorProfile?.email && (
               <p>
-                Found a problem?{" "}
+                See a problem?{" "}
                 <a 
                   href={`mailto:${authorProfile.email}?subject=${"Inquiry about " + species.scientific_name + " species from Biodiversity Hub"}`}
                   className="text-blue-600 hover:underline"

@@ -172,11 +172,39 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
     
     try {
       const response = await fetch(`/api/wikipedia?species=${encodeURIComponent(searchTerm.trim())}`);
-      const data = await response.json() as { description?: string; error?: string };
+      const data = await response.json() as { 
+        scientificName?: string; 
+        commonName?: string; 
+        description?: string; 
+        totalPopulation?: number; 
+        error?: string 
+      };
       
       if (data.description) {
-        form.setValue("description", data.description);
-        toast({ title: "Description autofilled from Wikipedia!" });
+        // Autofill all available fields
+        if (data.scientificName) {
+          form.setValue("scientific_name", data.scientificName);
+        }
+        if (data.commonName) {
+          form.setValue("common_name", data.commonName);
+        }
+        if (data.description) {
+          form.setValue("description", data.description);
+        }
+        if (data.totalPopulation) {
+          form.setValue("total_population", data.totalPopulation);
+        }
+        
+        const filledFields = [];
+        if (data.scientificName) filledFields.push("Scientific Name");
+        if (data.commonName) filledFields.push("Common Name");
+        if (data.description) filledFields.push("Description");
+        if (data.totalPopulation) filledFields.push("Total Population");
+        
+        toast({ 
+          title: `Wikipedia data loaded!`, 
+          description: `Autofilled: ${filledFields.join(", ")}` 
+        });
       } else {
         toast({ title: "No Wikipedia article found", variant: "destructive" });
       }

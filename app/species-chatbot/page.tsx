@@ -63,8 +63,7 @@ return (
       <div className="mt-4 flex gap-4">
         <div className="mt-4 rounded-lg bg-foreground p-4 text-background">
           <TypographyP>
-            The Species Chatbot is a feature to be implemented that is specialized to answer questions about animals.
-            Ideally, it will be able to provide information on various species, including their habitat, diet,
+            The Species Chatbot will provide information on various species, including their habitat, diet,
             conservation status, and other relevant details. Any unrelated prompts will return a message to the user
             indicating that the chatbot is specialized for species-related queries only.
           </TypographyP>

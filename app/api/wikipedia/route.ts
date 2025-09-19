@@ -10,8 +10,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    const description = await searchWikipediaSpecies(speciesName);
-    return NextResponse.json({ description });
+    const speciesData = await searchWikipediaSpecies(speciesName);
+    return NextResponse.json(speciesData);
   } catch (error) {
     console.error("Wikipedia API error:", error);
     return NextResponse.json({ error: "Failed to fetch Wikipedia data" }, { status: 500 });
