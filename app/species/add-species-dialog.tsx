@@ -168,6 +168,10 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
   const handleWikipediaSearch = async () => {
     if (!searchTerm.trim()) return;
     
+    
+    const confirmed = window.confirm("Are you sure you want to autofill information from Wikipedia? This will override existing changes.");
+    if (!confirmed) return;
+    
     setIsSearching(true);
     
     try {

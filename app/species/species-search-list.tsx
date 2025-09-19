@@ -58,7 +58,7 @@ export default function SpeciesSearchList() {
     if (sortBy === "alphabetical") {
       return (a.common_name ?? a.scientific_name).localeCompare(b.common_name ?? b.scientific_name);
     }
-    return b.id - a.id; // latest first
+    return b.id - a.id; 
   });
   return (
     <>
