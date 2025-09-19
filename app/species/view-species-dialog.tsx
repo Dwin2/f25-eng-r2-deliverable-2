@@ -11,11 +11,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
-
 import type { Database } from "@/lib/schema";
-type Species = Database["public"]["Tables"]["species"]["Row"];
 
-export function ViewSpeciesDialog({ species }: { species: Species }) {
+type Species = Database["public"]["Tables"]["species"]["Row"];
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+export function ViewSpeciesDialog({species, authorProfile }: { species: Species; authorProfile: Profile | null; }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -33,7 +34,22 @@ export function ViewSpeciesDialog({ species }: { species: Species }) {
           <div><b>Kingdom:</b> {species.kingdom}</div>
           <div><b>Total Population:</b> {species.total_population?.toLocaleString() ?? "—"}</div>
           <div><b>Description:</b> {species.description ?? "—"}</div>
+          
+          <div className="border-t pt-3">
+            <div className="flex items-center gap-2 mb-2">
+              <b>Author:</b> {authorProfile?.display_name ?? "Unknown"}
+            </div>
+            {authorProfile?.email && (
+              <a 
+                href={`mailto:${authorProfile.email}?subject=${species.scientific_name}`}
+                className="text-blue-600 hover:underline flex items-center gap-1"
+              >
+                Contact Author
+              </a>
+            )}
+          </div>
         </div>
+
         <DialogClose asChild>
           <Button variant="secondary" className="mt-4 w-full">Close</Button>
         </DialogClose>

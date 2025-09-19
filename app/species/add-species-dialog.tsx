@@ -16,6 +16,7 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVa
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/use-toast";
 import { createBrowserSupabaseClient } from "@/lib/client-utils";
+import { searchWikipediaSpecies } from "@/lib/services/wikipedia-api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState, type BaseSyntheticEvent } from "react";
 import { useForm } from "react-hook-form";
@@ -75,9 +76,11 @@ const defaultValues: Partial<FormData> = {
 export default function AddSpeciesDialog({ userId }: { userId: string }) {
   console.log("AddSpeciesDialog userId:", userId);
   // Control open/closed state of the dialog
-  const [open, setOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState(false);
   const [imageValidating, setImageValidating] = useState(false);
-  const [imageError, setImageError] = useState<string>("");
+  const [imageError, setImageError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
   // Instantiate form functionality with React Hook Form, passing in the Zod schema (for validation) and default values
   const form = useForm<FormData>({
@@ -142,10 +145,10 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
     } 
   };
 
-  const validateImage =  (url: string) => {
-    if (!url || url.trim() === "") {
+  const validateImage = (url: string) => {
+    if (!url?.trim()) {
       setImageError("");
-      return true;
+      return;
     }
 
     setImageValidating(true);
@@ -161,6 +164,22 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
       setImageValidating(false);
     };
     img.src = url;
+  };
+
+  const handleWikipediaSearch = async () => {
+    if (!searchTerm.trim()) return;
+    
+    setIsSearching(true);
+    const description = await searchWikipediaSpecies(searchTerm.trim());
+    
+    if (description) {
+      form.setValue("description", description);
+      toast({ title: "Description autofilled from Wikipedia!" });
+    } else {
+      toast({ title: "No Wikipedia article found", variant: "destructive" });
+    }
+    
+    setIsSearching(false);
   };
 
   return (
@@ -181,6 +200,26 @@ export default function AddSpeciesDialog({ userId }: { userId: string }) {
         <Form {...form}>
           <form onSubmit={(e: BaseSyntheticEvent) => void form.handleSubmit(onSubmit)(e)}>
             <div className="grid w-full items-center gap-4">
+              {/* Wikipedia Search */}
+              <div className="rounded-lg border border-border bg-muted/50 p-4">
+                <div className="flex gap-2">
+                  <Input
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search Wikipedia for species info..."
+                    className="flex-1"
+                    onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), void handleWikipediaSearch())}
+                  />
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => void handleWikipediaSearch()}
+                    disabled={isSearching || !searchTerm.trim()}
+                  >
+                    {isSearching ? <Icons.spinner className="h-4 w-4 animate-spin" /> : "Search"}
+                  </Button>
+                </div>
+              </div>
               <FormField
                 control={form.control}
                 name="scientific_name"

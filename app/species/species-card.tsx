@@ -15,8 +15,9 @@ import Image from "next/image";
 import { ViewSpeciesDialog } from "./view-species-dialog";
 import { EditSpecies } from "./edit-species";
 type Species = Database["public"]["Tables"]["species"]["Row"];
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
 
-export default function SpeciesCard({ species, userId }: { species: Species; userId: string }) {
+export default function SpeciesCard({ species, userId, authorProfile }: { species: Species; userId: string; authorProfile: Profile | null; }) {
   return (
     <div className="m-4 w-72 min-w-72 flex-none rounded border-2 p-3 shadow">
       {species.image && (
@@ -33,7 +34,7 @@ export default function SpeciesCard({ species, userId }: { species: Species; use
   <h4 className="text-lg font-light italic">{species.common_name}</h4>
       <p>{species.description ? species.description.slice(0, 150).trim() + "..." : ""}</p>
       {/* Replace the button with the detailed view dialog. */}
-      <ViewSpeciesDialog species={species} />
+      <ViewSpeciesDialog species={species} authorProfile={authorProfile} />
     </div>
   );
 }

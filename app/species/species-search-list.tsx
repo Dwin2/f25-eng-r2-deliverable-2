@@ -9,10 +9,15 @@ import SpeciesCard from "./species-card";
 import type { Database } from "@/lib/schema";
 
 type Species = Database["public"]["Tables"]["species"]["Row"];
+type Profile = Database["public"]["Tables"]["profiles"]["Row"];
+
+type SpeciesWithAuthor = Species & {
+  author_profile: Profile | null;
+};
 
 export default function SpeciesSearchList() {
-  const [species, setSpecies] = useState<Species[]>([]);
-  const [userId, setUserId] = useState<string>("");
+  const [species, setSpecies] = useState<SpeciesWithAuthor[]>([]);
+  const [userId, setUserId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
 
@@ -25,7 +30,13 @@ export default function SpeciesSearchList() {
     if (!session) return router.push("/");
     
     setUserId(session.user.id);
-    const { data: speciesData } = await supabase.from("species").select("*").order("id", { ascending: false });
+    const { data: speciesData } = await supabase
+      .from("species")
+      .select(`
+        *,
+        author_profile:profiles!species_author_fkey(*)
+      `)
+      .order("id", { ascending: false });
     setSpecies(speciesData ?? []);
   }, [router]);
 
@@ -58,7 +69,14 @@ export default function SpeciesSearchList() {
       </div>
 
     <div className="flex flex-wrap justify-center">
-        {filteredSpecies.map((species) => <SpeciesCard key={species.id} species={species} userId={userId} />)}
+        {filteredSpecies.map((species) => (
+          <SpeciesCard 
+            key={species.id} 
+            species={species} 
+            userId={userId} 
+            authorProfile={species.author_profile} 
+          />
+        ))}
       </div>
       </>
   );
